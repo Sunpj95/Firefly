@@ -45,10 +45,10 @@ export const siteConfig: SiteConfig = {
 	title: "伊布之家",
 
 	// 站点副标题
-	subtitle: "Demo site",
+	subtitle: "mlyb",
 
 	// 站点 URL
-	site_url: "https://manlinyuebai.xyz",
+	site_url: "https://mailinyuebai.xyz",
 
 	// 站点描述
 	description:

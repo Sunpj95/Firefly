@@ -132,8 +132,28 @@ const coverLqipProps = cover
   <!-- 瀑布流照片网格 -->
   <div class="w-full rounded-(--radius-large) overflow-hidden relative mt-4">
     <div class="card-base z-10 px-6 py-6 relative w-full">
-      {photos.length > 0 ? (
-        albumMeta.password ? (
+      {/* 上传按钮（仅伊布壁纸相册显示） */}
+      {albumMeta.id === "eevee-wallpaper" && (
+        <div class="mb-4 flex justify-end">
+          <button id="upload-btn" class="inline-flex items-center gap-1.5 text-sm bg-(--primary) text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+            <Icon name="material-symbols:upload" class="text-base" />
+            上传图片
+          </button>
+        </div>
+      )}
+      {photos.length > 0 || true ? (
+        !albumMeta.password ? (
+          <div
+            id="photo-grid"
+            class="gallery-masonry"
+            style={`column-count: 2; column-gap: 0.75rem; --col-width: ${columnWidth}px;`}
+          >
+            {photos.map((photo) => (
+              <PhotoCard src={photo} albumId={albumMeta.id} />
+            ))}
+            {/* 动态上传的图片会插在这里 */}
+          </div>
+        ) : (
           <EncryptedContent password={albumMeta.password} slug={albumMeta.id} hint={albumMeta.passwordHint}>
             <div
               class="gallery-masonry"
@@ -144,15 +164,6 @@ const coverLqipProps = cover
               ))}
             </div>
           </EncryptedContent>
-        ) : (
-          <div
-            class="gallery-masonry"
-            style={`column-count: 2; column-gap: 0.75rem; --col-width: ${columnWidth}px;`}
-          >
-            {photos.map((photo) => (
-              <PhotoCard src={photo} albumId={albumMeta.id} />
-            ))}
-          </div>
         )
       ) : (
         <div class="flex flex-col items-center justify-center py-16 text-neutral-400 dark:text-neutral-500">
@@ -162,5 +173,110 @@ const coverLqipProps = cover
       )}
     </div>
   </div>
+
+  {/* 上传弹窗 */}
+  {albumMeta.id === "eevee-wallpaper" && (
+    <div id="upload-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="card-base w-full max-w-md mx-4 p-6 rounded-2xl">
+        <h3 class="text-xl font-bold mb-4">上传图片</h3>
+        <div id="password-section">
+          <label class="block text-sm text-neutral-600 dark:text-neutral-400 mb-2">请输入密码</label>
+          <input type="password" id="upload-password" class="w-full px-3 py-2 border border-(--line-divider) rounded-lg bg-transparent mb-4" placeholder="输入密码" />
+          <div class="flex gap-2">
+            <button id="confirm-password" class="flex-1 bg-(--primary) text-white px-4 py-2 rounded-lg hover:opacity-90">确认</button>
+            <button id="cancel-modal" class="flex-1 bg-neutral-200 dark:bg-neutral-700 px-4 py-2 rounded-lg">取消</button>
+          </div>
+        </div>
+        <div id="file-section" class="hidden">
+          <input type="file" id="file-input" accept="image/*" multiple class="hidden" />
+          <label for="file-input" class="block w-full text-center px-4 py-8 border-2 border-dashed border-(--line-divider) rounded-lg cursor-pointer hover:border-(--primary) transition-colors mb-4">
+            <Icon name="material-symbols:image" class="text-4xl mx-auto mb-2 text-neutral-400" />
+            <p class="text-sm text-neutral-500">点击选择图片</p>
+          </label>
+          <button id="close-modal" class="w-full bg-neutral-200 dark:bg-neutral-700 px-4 py-2 rounded-lg">关闭</button>
+        </div>
+      </div>
+    </div>
+  )}
+
+  <script>
+    if (document.getElementById('upload-btn')) {
+      const uploadBtn = document.getElementById('upload-btn');
+      const modal = document.getElementById('upload-modal');
+      const passwordSection = document.getElementById('password-section');
+      const fileSection = document.getElementById('file-section');
+      const passwordInput = document.getElementById('upload-password');
+      const confirmBtn = document.getElementById('confirm-password');
+      const cancelBtn = document.getElementById('cancel-modal');
+      const closeBtn = document.getElementById('close-modal');
+      const fileInput = document.getElementById('file-input');
+      const grid = document.getElementById('photo-grid');
+
+      const UPLOAD_PASSWORD = '218245';
+      const STORAGE_KEY = 'eevee_wallpaper_uploads';
+
+      // 加载已上传的图片
+      function loadUploaded() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            const urls = JSON.parse(saved);
+            urls.forEach(url => {
+              const img = document.createElement('img');
+              img.src = url;
+              img.className = 'w-full mb-3 rounded-lg';
+              img.loading = 'lazy';
+              grid.appendChild(img);
+            });
+          }
+        } catch(e) {}
+      }
+      loadUploaded();
+
+      uploadBtn.onclick = () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        passwordSection.classList.remove('hidden');
+        fileSection.classList.add('hidden');
+        passwordInput.value = '';
+      };
+
+      cancelBtn.onclick = closeModal;
+      closeBtn.onclick = closeModal;
+
+      function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+
+      confirmBtn.onclick = () => {
+        if (passwordInput.value === UPLOAD_PASSWORD) {
+          passwordSection.classList.add('hidden');
+          fileSection.classList.remove('hidden');
+        } else {
+          alert('密码错误');
+        }
+      };
+
+      fileInput.onchange = (e) => {
+        const files = e.target.files;
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        Array.from(files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const url = ev.target.result;
+            saved.push(url);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = 'w-full mb-3 rounded-lg';
+            grid.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        });
+        closeModal();
+      };
+    }
+  </script>
 
 </MainGridLayout>

@@ -32,8 +32,11 @@ const {
 
 const detailUrl = url(`/gallery/${id}/`);
 
+// 加密相册不显示封面图
+const displayCover = encrypted ? "" : cover;
+
 // LQIP 渐变占位
-const lqipProps = cover ? getLqipProps(cover, undefined, true) : { style: "" };
+const lqipProps = displayCover ? getLqipProps(displayCover, undefined, true) : { style: "" };
 
 // 标签：只显示前 N 个，超出折叠成 +N
 const maxTags = 2;
@@ -55,11 +58,11 @@ const coverClass = gridCoverFullWidth
 >
   <!-- 封面（在上） -->
   <a href={detailUrl} aria-label={name} class={coverClass}>
-    {cover ? (
+    {displayCover ? (
       <>
         <div class="lqip-placeholder absolute inset-0 pointer-events-none" style={lqipProps.style} aria-hidden="true"></div>
         <img
-          src={cover}
+          src={displayCover}
           alt={name}
           class="w-full h-full object-cover pointer-events-none opacity-0 transition-all duration-500 ease-out group-hover:scale-110"
           loading="lazy"

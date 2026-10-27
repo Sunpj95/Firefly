@@ -3,7 +3,7 @@ title: "Web 安全基础：常见漏洞与防御"
 published: 2026-10-27
 category: "Web安全"
 tags: [Web安全, 渗透测试, 漏洞]
-image: "https://aka.doubaocdn.com/s/PM1UX9BLQr"
+image: "/images/owasp/1.jpg"
 ---
 
 ## 什么是 Web 安全
@@ -13,6 +13,16 @@ Web 安全就是保护网站和 Web 应用不被黑客攻击、篡改、窃取�
 ## OWASP Top 10 十大安全风险
 
 OWASP（开放Web应用安全项目）每年会发布最严重的十大 Web 安全风险，这是安全从业者必须了解的基础知识。
+
+![OWASP Top 10 十大漏洞介绍 1/5](/images/owasp/1.jpg)
+
+![OWASP Top 10 十大漏洞介绍 2/5](/images/owasp/2.jpg)
+
+![OWASP Top 10 十大漏洞介绍 3/5](/images/owasp/3.jpg)
+
+![OWASP Top 10 十大漏洞介绍 4/5](/images/owasp/4.jpg)
+
+![OWASP Top 10 十大漏洞介绍 5/5](/images/owasp/5.jpg)
 
 ---
 

@@ -3,7 +3,7 @@ title: "Web 安全基础：常见漏洞与防御"
 published: 2026-10-27
 category: "Web安全"
 tags: [Web安全, 渗透测试, 漏洞]
-image: "/images/owasp/1.jpg"
+image: "https://aka.doubaocdn.com/s/9030ybmx4e"
 ---
 
 ## 什么是 Web 安全
